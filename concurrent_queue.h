@@ -279,16 +279,22 @@ class ConcurrentQueue {
     PushImpl(item);
   }
 
-  // Pop out the front element to `result`
+  // Pop out and discard the front element, will wait for element to push.
+  // Return true on success.
+  // Return false on failure (trying to
+  // pop from a finished and empty queue).
+  bool Pop() { return PopImpl(); }
+
+  // Pop out the front element to `result`, will wait for element to push.
+  // Return true on success.
+  // Return false on failure (trying to
+  // pop from a finished and empty queue).
   // Enabled when T != void
   template <typename U = T>
   bool Pop(
       typename std::enable_if<!std::is_same<U, void>::value, U&>::type result) {
     return PopImpl(result);
   }
-
-  // Pop out and discard the front element
-  bool Pop() { return PopImpl(); }
 
   // Return number of element in the queue
   std::size_t Size() const {
