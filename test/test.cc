@@ -50,6 +50,18 @@ TEST_CASE("std::unique_ptr in limited sized concurrent queue",
   REQUIRE(*v == 1);
 }
 
+TEST_CASE("std::unique_ptr in limited sized concurrent queue, non-blocking",
+          "<std::unique_ptr, LimitedSize>(non-blocking)") {
+  using Unique = std::unique_ptr<int>;
+  ConcurrentQueue<Unique, 5> c;
+  c.Push(std::make_unique<int>(1));
+  Unique v;
+  bool suc = c.TryPop(v);
+  REQUIRE(suc);
+  REQUIRE(v);
+  REQUIRE(*v == 1);
+}
+
 TEST_CASE(
     "MoveOnlyStruct in limited sized concurrent queue destruct at the right "
     "time",

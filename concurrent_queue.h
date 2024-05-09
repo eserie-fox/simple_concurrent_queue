@@ -279,13 +279,30 @@ class ConcurrentQueue {
     PushImpl(item);
   }
 
-  // Pop out and discard the front element, will wait for element to push.
+  // Pop out and discard the front element. (non-blocking, return immediately)
+  // Return true on success.
+  // Return false on failure (trying to
+  // pop from an empty queue).
+  bool TryPop() { return TryPopImpl(); }
+
+  // Pop out the front element to `result`. (non-blocking, return immediately)
+  // Return true on success.
+  // Return false on failure (trying to
+  // pop from an empty queue).
+  // Enabled when T != void
+  template <typename U = T>
+  bool TryPop(
+      typename std::enable_if<!std::is_same<U, void>::value, U&>::type result) {
+    return TryPopImpl(result);
+  }
+
+  // Pop out and discard the front element, will wait for element to push. (blocking, may wait other thread to push new element)
   // Return true on success.
   // Return false on failure (trying to
   // pop from a finished and empty queue).
   bool Pop() { return PopImpl(); }
 
-  // Pop out the front element to `result`, will wait for element to push.
+  // Pop out the front element to `result`, will wait for element to push. (blocking, may wait other thread to push new element)
   // Return true on success.
   // Return false on failure (trying to
   // pop from a finished and empty queue).
@@ -354,6 +371,18 @@ class ConcurrentQueue {
     assert(finished_);
     // finished, should notify other threads to stop waiting.
     WakeupAll();
+    return false;
+  }
+
+  template <typename... Args>
+  bool TryPopImpl(Args&&... result) {
+    std::unique_lock<std::mutex> lk{lock_};
+    if (!data_.Empty()) {
+      data_.Pop(std::forward<Args>(result)...);
+
+      if (LimitedSize()) full_cond_.notify_one();
+      return true;
+    }
     return false;
   }
 
