@@ -74,8 +74,11 @@ void TestLimited() {
 }
 
 int main() {
+  std::cout << " -----Example_cpp11 begin----" << std::endl;
   TestUnlimited();
   TestLimited();
   std::cout << "Passed in C++11" << std::endl;
+  std::cout << " -----Example_cpp11 end----" << std::endl;
+
   return 0;
 }

@@ -59,6 +59,7 @@ void Consumer(int id, CQueue& queue) {
 }
 
 int main(){
+  std::cout << " -----Example2 begin----" << std::endl;
   // multiple producer and multiple consumer are allowed
   CQueue q;
   const int NProducer = 5;
@@ -82,6 +83,12 @@ int main(){
             << MemoryLeakTestStruct::constructed_count << "\n"
             << "Remaining number of object after consuming: "
             << MemoryLeakTestStruct::remaining_count << std::endl;
+  if (MemoryLeakTestStruct::remaining_count == 0) {
+    std::cout << "Passed" << std::endl;
+  } else {
+    std::cout << "Failed" << std::endl;
+  }
+  std::cout << " -----Example2 end----" << std::endl;
 
-  return 0;
+  return MemoryLeakTestStruct::remaining_count == 0 ? 0 : 1;
 }

@@ -43,6 +43,7 @@ void Consumer(int id, std::vector<std::vector<int>>& collections,
 }
 
 int main(){
+  std::cout << " -----Example1 begin----" << std::endl;
   // multiple producer and multiple consumer are allowed
   CQueue q;
   const int NProducer = 5;
@@ -75,6 +76,12 @@ int main(){
 
   std::cout << "Consumers can catch all the production from producer? "
             << (suc ? "Yes" : "No") << std::endl;
+  if (suc) {
+    std::cout << "Passed" << std::endl;
+  } else {
+    std::cout << "Failed" << std::endl;
+  }
+  std::cout << " -----Example1 end----" << std::endl;
 
-  return 0;
+  return suc ? 0 : 1;
 }
